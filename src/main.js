@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
+
+// 导入全军样式
+import './style/bace.css'
 //导入element-ui
 import ElementUI from 'element-ui';
 //导入element-ui的样式
