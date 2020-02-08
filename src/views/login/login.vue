@@ -49,9 +49,10 @@
         </el-form-item>
         <el-form-item>
           <el-button class="mybtn" @click="submitForm('loginForm')" type="primary">登录</el-button>
-          <el-button class="mybtn" type="primary">注册</el-button>
+          <el-button class="mybtn" @click="showRegister" type="primary">注册</el-button>
         </el-form-item>
       </el-form>
+      <registerDialog ref="registerDialog"></registerDialog>
     </div>
     <!-- 右边图片 -->
     <img src="../../assets/login_banner_ele.png" alt />
@@ -59,8 +60,14 @@
 </template>
 
 <script>
+//导入 注册对话框组件
+import registerDialog from "./components/registerDialog.vue";
 export default {
   name: "login",
+  //注册组件
+  components: {
+    registerDialog //省略 属性值
+  },
   data() {
     return {
       loginForm: {
@@ -83,8 +90,15 @@ export default {
           { min: 4, max: 4, message: "验证码的长度为4位", trigger: "blur" }
         ]
       },
-      methods: {
+    };
+    
+  },
+   methods: {
+        // 提交表单
         submitForm(formName) {
+          // 等同于 this.$refs['loginForm'] 相当于获取到了Element-ui的表单
+          // this.$refs['loginForm'] 等同于 this.$refs.loginForm
+          // validate这个方法是Element-ui的表单的方法
           this.$refs[formName].validate(valid => {
             if (valid) {
               this.$message.success("验证成功");
@@ -93,10 +107,14 @@ export default {
               return false;
             }
           });
+        },
+        showRegister(){
+          // this.$refs 可以获取所有设置了ref属性的元素，包括组件
+          // registerDialog 和上面设置的属性要一致
+          // 也可以用 this.$refs['registerDialog']
+          this.$refs.registerDialog.dialogFormVisible = true;
         }
       }
-    };
-  }
 };
 </script>
 
@@ -150,7 +168,7 @@ export default {
     }
     //验证码的提示高度
     .code-col {
-      height: 40.7px;
+      height: 40.8px;
     }
   }
   // 协议区域的布局
