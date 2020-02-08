@@ -16,11 +16,28 @@
         </el-form-item>
         <!-- 密码 -->
         <el-form-item>
-          <el-input prefix-icon="el-icon-lock" placeholder="请输入密码" show-password v-model="loginForm.password"></el-input>
+          <el-input
+            prefix-icon="el-icon-lock"
+            placeholder="请输入密码"
+            show-password
+            v-model="loginForm.password"
+          ></el-input>
         </el-form-item>
         <!-- 验证码 -->
         <el-form-item>
-          <el-input prefix-icon="el-icon-key" placeholder="请输入验证码" v-model="loginForm.loginCode"></el-input>
+          <el-row>
+            <el-col :span="17">
+              <el-input
+                prefix-icon="el-icon-key"
+                placeholder="请输入验证码"
+                v-model="loginForm.loginCode"
+              ></el-input>
+            </el-col>
+            <!-- 登录验证码 -->
+            <el-col :span="7">
+              <img class="login-code" src="../../assets/login_captcha.png" alt="">
+            </el-col>
+          </el-row>
         </el-form-item>
         <!-- 用户协议 -->
         <el-form-item>
@@ -44,13 +61,13 @@ export default {
     return {
       loginForm: {
         //手机号
-        phone:'',
+        phone: "",
         //密码
-        password:'',
+        password: "",
         //验证码
-        loginCode:'',
+        loginCode: "",
         //是否勾选
-        isChecked: false,
+        isChecked: false
       }
     };
   }
@@ -76,8 +93,12 @@ export default {
     width: 478px;
     height: 550px;
     background-color: #f5f5f5;
-    box-sizing:border-box;
+    box-sizing: border-box;
     padding-right: 41px;
+    .login-code{
+      width: 100%;
+      height: 40.8px;
+    }
     .title-box {
       display: flex;
       align-items: center;
