@@ -8,24 +8,29 @@
         <span class="line"></span>
         <span class="sub-title">用户登录</span>
       </div>
-      <div class="center">
-        <el-input class="user" placeholder="请输入手机号" prefix-icon="el-icon-user" v-model="input1"></el-input>
-        <el-input
-          class="user"
-          placeholder="请输入密码"
-          prefix-icon="el-icon-lock"
-          v-model="input2"
-          show-password
-        ></el-input>
-        <el-input class="user" placeholder="请输入验证码" prefix-icon="el-icon-key" v-model="input3"></el-input>
-        <el-checkbox v-model="checked">
-          已阅读并同意
-          <el-link  type="primary">用户协议</el-link>和
-          <el-link type="primary">隐私条款</el-link>
-        </el-checkbox>
-      </div>
-      <el-button @click="clickMe" class="my-btn" type="primary">登录</el-button>
-      <el-button class="my-btn" type="primary">注册</el-button>
+      <!-- 表单 -->
+      <el-form ref="form" :model="loginForm" label-width="43px">
+        <!-- 手机号 -->
+        <el-form-item>
+          <el-input prefix-icon="el-icon-user" placeholder="请输入手机号" v-model="loginForm.phone"></el-input>
+        </el-form-item>
+        <!-- 密码 -->
+        <el-form-item>
+          <el-input prefix-icon="el-icon-lock" placeholder="请输入密码" show-password v-model="loginForm.password"></el-input>
+        </el-form-item>
+        <!-- 验证码 -->
+        <el-form-item>
+          <el-input prefix-icon="el-icon-key" placeholder="请输入验证码" v-model="loginForm.loginCode"></el-input>
+        </el-form-item>
+        <!-- 用户协议 -->
+        <el-form-item>
+          <el-checkbox v-model="loginForm.isChecked">是否同意用户协议</el-checkbox>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary">立即创建</el-button>
+          <el-button>取消</el-button>
+        </el-form-item>
+      </el-form>
     </div>
     <!-- 右边图片 -->
     <img src="../../assets/login_banner_ele.png" alt />
@@ -37,9 +42,16 @@ export default {
   name: "login",
   data() {
     return {
-      input1: "",
-      input2: "",
-      input3: ""
+      loginForm: {
+        //手机号
+        phone:'',
+        //密码
+        password:'',
+        //验证码
+        loginCode:'',
+        //是否勾选
+        isChecked: false,
+      }
     };
   }
 };
@@ -64,11 +76,14 @@ export default {
     width: 478px;
     height: 550px;
     background-color: #f5f5f5;
+    box-sizing:border-box;
+    padding-right: 41px;
     .title-box {
       display: flex;
       align-items: center;
       margin-top: 44px;
       margin-left: 20%;
+      margin-bottom: 27px;
       .title {
         font-size: 24px;
         margin-left: 16px;
@@ -95,9 +110,8 @@ export default {
       height: 45px;
       margin-bottom: 30px;
     }
-    
   }
-  
+
   .my-btn {
     width: 394px;
     margin-left: 8%;
