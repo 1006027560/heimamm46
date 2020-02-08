@@ -41,7 +41,11 @@
         </el-form-item>
         <!-- 用户协议 -->
         <el-form-item>
-          <el-checkbox v-model="loginForm.isChecked">是否同意用户协议</el-checkbox>
+          <el-checkbox v-model="loginForm.isChecked">我已阅读并同意
+            <el-link type='primary'>用户协议</el-link>
+            和
+            <el-link type='primary'>隐私条款</el-link>
+          </el-checkbox>
         </el-form-item>
         <el-form-item>
           <el-button type="primary">立即创建</el-button>
@@ -93,8 +97,10 @@ export default {
     width: 478px;
     height: 550px;
     background-color: #f5f5f5;
+    // 设置样式 把表单间隙空出来
     box-sizing: border-box;
     padding-right: 41px;
+    // 验证码样式
     .login-code{
       width: 100%;
       height: 40.8px;
@@ -121,26 +127,12 @@ export default {
       }
     }
   }
-  .center {
-    margin-left: 43px;
-    margin-top: 30px;
-    margin-bottom: 30px;
-    .user {
-      //   margin-top: 30px;
-      width: 394px;
-      height: 45px;
-      margin-bottom: 30px;
+  // 协议区域的布局
+  .el-checkbox {
+    display: flex;
+    .el-checkbox__label{
+      display: flex;
     }
-  }
-
-  .my-btn {
-    width: 394px;
-    margin-left: 8%;
-    margin-bottom: 30px;
-  }
-  .my-btn + .my-btn {
-    margin: 0;
-    margin-left: 8%;
   }
 }
 </style>
