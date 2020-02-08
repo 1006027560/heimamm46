@@ -1,7 +1,8 @@
 import Vue from 'vue'
+// 导入组件
 import App from './App.vue'
 
-// 导入全军样式
+// 导入全局样式
 import './style/bace.css'
 //导入element-ui
 import ElementUI from 'element-ui';
