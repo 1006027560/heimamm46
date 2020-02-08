@@ -9,13 +9,13 @@
         <span class="sub-title">用户登录</span>
       </div>
       <!-- 表单 -->
-      <el-form ref="form" :model="loginForm" label-width="43px">
+      <el-form ref="loginForm" :rules="rules" :model="loginForm" label-width="43px">
         <!-- 手机号 -->
         <el-form-item>
           <el-input prefix-icon="el-icon-user" placeholder="请输入手机号" v-model="loginForm.phone"></el-input>
         </el-form-item>
         <!-- 密码 -->
-        <el-form-item>
+        <el-form-item prop="password">
           <el-input
             prefix-icon="el-icon-lock"
             placeholder="请输入密码"
@@ -24,7 +24,7 @@
           ></el-input>
         </el-form-item>
         <!-- 验证码 -->
-        <el-form-item>
+        <el-form-item prop="loginCode">
           <el-row>
             <el-col :span="17">
               <el-input
@@ -34,7 +34,7 @@
               ></el-input>
             </el-col>
             <!-- 登录验证码 -->
-            <el-col :span="7">
+            <el-col :span="7" class="code-col">
               <img class="login-code" src="../../assets/login_captcha.png" alt />
             </el-col>
           </el-row>
@@ -48,7 +48,7 @@
           </el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button class="mybtn" type="primary">登录</el-button>
+          <el-button class="mybtn" @click="submitForm('loginForm')" type="primary">登录</el-button>
           <el-button class="mybtn" type="primary">注册</el-button>
         </el-form-item>
       </el-form>
@@ -72,6 +72,28 @@ export default {
         loginCode: "",
         //是否勾选
         isChecked: false
+      },
+      rules: {
+        password: [
+          { required: true, message: "密码不能为空", trigger: "blur" },
+          { min: 6, max: 12, message: "密码的长度为6-12位", trigger: "blur" }
+        ],
+        loginCode: [
+          { required: true, message: "验证码不能为空", trigger: "blur" },
+          { min: 4, max: 4, message: "验证码的长度为4位", trigger: "blur" }
+        ]
+      },
+      methods: {
+        submitForm(formName) {
+          this.$refs[formName].validate(valid => {
+            if (valid) {
+              this.$message.success("验证成功");
+            } else {
+              this.$message.error("验证失败");
+              return false;
+            }
+          });
+        }
       }
     };
   }
@@ -126,6 +148,10 @@ export default {
         margin-left: 12px;
       }
     }
+    //验证码的提示高度
+    .code-col {
+      height: 40.7px;
+    }
   }
   // 协议区域的布局
   .el-checkbox {
@@ -138,7 +164,7 @@ export default {
   .mybtn {
     width: 100%;
   }
-  .mybtn+.mybtn {
+  .mybtn + .mybtn {
     margin-top: 26px;
     margin-left: 0;
   }
