@@ -35,21 +35,21 @@
             </el-col>
             <!-- 登录验证码 -->
             <el-col :span="7">
-              <img class="login-code" src="../../assets/login_captcha.png" alt="">
+              <img class="login-code" src="../../assets/login_captcha.png" alt />
             </el-col>
           </el-row>
         </el-form-item>
         <!-- 用户协议 -->
         <el-form-item>
-          <el-checkbox v-model="loginForm.isChecked">我已阅读并同意
-            <el-link type='primary'>用户协议</el-link>
-            和
-            <el-link type='primary'>隐私条款</el-link>
+          <el-checkbox v-model="loginForm.isChecked">
+            我已阅读并同意
+            <el-link type="primary">用户协议</el-link>和
+            <el-link type="primary">隐私条款</el-link>
           </el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">立即创建</el-button>
-          <el-button>取消</el-button>
+          <el-button class="mybtn" type="primary">登录</el-button>
+          <el-button class="mybtn" type="primary">注册</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -101,7 +101,7 @@ export default {
     box-sizing: border-box;
     padding-right: 41px;
     // 验证码样式
-    .login-code{
+    .login-code {
       width: 100%;
       height: 40.8px;
     }
@@ -130,9 +130,17 @@ export default {
   // 协议区域的布局
   .el-checkbox {
     display: flex;
-    .el-checkbox__label{
+    align-items: center;
+    .el-checkbox__label {
       display: flex;
     }
+  }
+  .mybtn {
+    width: 100%;
+  }
+  .mybtn+.mybtn {
+    margin-top: 26px;
+    margin-left: 0;
   }
 }
 </style>
