@@ -83,7 +83,8 @@ export default {
       rules: {
         password: [
           { required: true, message: "密码不能为空", trigger: "blur" },
-          { min: 6, max: 12, message: "密码的长度为6-12位", trigger: "blur" }
+          { min: 6, max: 12, message: "密码的长度为6-12位", trigger: "change" }
+          //change边打字边验证
         ],
         loginCode: [
           { required: true, message: "验证码不能为空", trigger: "blur" },
