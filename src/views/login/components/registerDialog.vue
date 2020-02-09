@@ -6,9 +6,9 @@
     title="用户注册"
     :visible.sync="dialogFormVisible"
   >
-    <el-form :model="form">
-      <el-form-item label="昵称" :label-width="formLabelWidth">
-        <el-input v-model="form.name" autocomplete="off"></el-input>
+    <el-form :model="form" :rules="rules" ref="registerForm">
+      <el-form-item label="昵称" prop="username" :label-width="formLabelWidth">
+        <el-input v-model="form.username" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="邮箱" :label-width="formLabelWidth">
         <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -16,14 +16,14 @@
       <el-form-item label="手机" :label-width="formLabelWidth">
         <el-input v-model="form.name" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="密码" :label-width="formLabelWidth">
-        <el-input v-model="form.name" autocomplete="off"></el-input>
+      <el-form-item label="密码" prop="password" :label-width="formLabelWidth">
+        <el-input show-password v-model="form.password" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="图形码" :label-width="formLabelWidth">
-        <el-col :span="16" >
+        <el-col :span="16">
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-col>
-        <el-col :span="7" :offset='1' class="register-box">
+        <el-col :span="7" :offset="1" class="register-box">
           <img class="register-code" src="../../../assets/login_captcha.png" alt />
         </el-col>
       </el-form-item>
@@ -32,7 +32,8 @@
           <el-col :span="16">
             <el-input v-model="form.name" autocomplete="off"></el-input>
           </el-col>
-          <el-col :span="7" :offset='1'>
+          <el-col :span="7" :offset="1">
+            <!--  :offset 列偏移 -->
             <el-button>点击获取验证码</el-button>
           </el-col>
         </el-row>
@@ -53,8 +54,21 @@ export default {
       dialogFormVisible: false,
       //表单数据
       form: {
-        name: ""
+        username: "",
+        password: ""
       },
+
+      rules: {
+        username: [
+          { required: true, message: "用户名不能为空", trigger: "blur" },
+          { min: 6, max: 12, message: "用户名长度为6-12位", trigger: "blur" }
+        ],
+        password: [
+          { required: true, message: "密码不能为空", trigger: "blur" },
+          { min: 6, max: 12, message: "密码的长度为6-12位", trigger: "change" }
+        ]
+      },
+
       //左侧文本距离
       formLabelWidth: "62px"
     };
