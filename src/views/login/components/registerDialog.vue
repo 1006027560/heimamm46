@@ -6,7 +6,23 @@
     title="用户注册"
     :visible.sync="dialogFormVisible"
   >
-    <el-form :model="form" :rules="rules" ref="registerForm">
+    <el-form status-icon :model="form" :rules="rules" ref="registerForm">
+      <el-form-item label="头像">
+        <el-upload
+          class="avatar-uploader"
+          :action="uploadUrl"
+          :show-file-list="false"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload"
+          name="image"
+        >
+          <!-- 根据接口name设置为image -->
+          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+          <!-- imageUrl有值,显示图片 -->
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          <!-- imageUrl没有值 显示的是i标签 -->
+        </el-upload>
+      </el-form-item>
       <el-form-item label="昵称" prop="username" :label-width="formLabelWidth">
         <el-input v-model="form.username" autocomplete="off"></el-input>
       </el-form-item>
@@ -21,10 +37,11 @@
       </el-form-item>
       <el-form-item label="图形码" :label-width="formLabelWidth">
         <el-col :span="16">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+          <el-input v-model="form.code" autocomplete="off"></el-input>
         </el-col>
         <el-col :span="7" :offset="1" class="register-box">
-          <img class="register-code" src="../../../assets/login_captcha.png" alt />
+           <!-- 图片验证码 -->
+          <img class="register-code" @click="changeCode" :src="codeURL" alt />
         </el-col>
       </el-form-item>
       <el-form-item label="验证码" :label-width="formLabelWidth">
@@ -33,8 +50,12 @@
             <el-input v-model="form.name" autocomplete="off"></el-input>
           </el-col>
           <el-col :span="7" :offset="1">
+            <!-- 点击获取 短信验证码 -->
             <!--  :offset 列偏移 -->
-            <el-button>点击获取验证码</el-button>
+            <el-button
+              @click="getSMS"
+              :disabled="delay !=0"
+            >{{delay ==0 ? '点击获取验证码':`还有${delay}秒继续获取` }}</el-button>
           </el-col>
         </el-row>
       </el-form-item>
@@ -47,6 +68,10 @@
 </template>
 
 <script>
+// import axios from "axios";
+//导入  抽取的接口
+import { sendsms } from "../../../api/register.js";
+
 // 验证手机号的 函数
 const checkPhone = (rule, value, callback) => {
   // 接收参数 value
@@ -60,7 +85,7 @@ const checkPhone = (rule, value, callback) => {
     // 错
     callback(new Error("手机号格式不对哦，请检查"));
   }
-}
+};
 const checkEmail = (rule, value, callback) => {
   // 接收参数 value
   // 定义正则表达式
@@ -73,7 +98,7 @@ const checkEmail = (rule, value, callback) => {
     // 错
     callback(new Error("邮箱格式不对哦，请检查"));
   }
-}
+};
 export default {
   // 验证手机号的 函数
 
@@ -86,7 +111,15 @@ export default {
         username: "",
         password: "",
         email: "",
-        phone:''
+        phone: "",
+        //图形验证码
+        code: "",
+        //倒计时时间
+        delay: 0,
+        //本地图片预览地址
+        imageUrl: "",
+        //头像上传的接口地址
+        uploadUrl: process.env.VUE_APP_URL + "/uploads"
       },
 
       rules: {
@@ -111,8 +144,80 @@ export default {
       },
 
       //左侧文本距离
-      formLabelWidth: "62px"
+      formLabelWidth: "62px",
+      //验证码基地址
+      codeURL: process.env.VUE_APP_URL + "/captcha?type=sendsms",
+      //倒计时时间
+      delay: 0,
+      //本地图片预览地址
+      imageUrl: "",
+      //头像上传的接口地址
+      uploadUrl: process.env.VUE_APP_URL + "/uploads"
     };
+  },
+  methods: {
+    //随机数解决验证码更换
+    changeCode() {
+      //随机数修改 效果不好
+      //this.codeURL = process.env.VUE_APP_URL+'/captcha?type=sendsms&t=' + Math.random()
+      // 时间戳修改
+      this.codeURL =
+        process.env.VUE_APP_URL + "/captcha?type=sendsms&t=" + Date.now();
+    },
+    //获取短信验证码
+    getSMS() {
+      //如果为0开启倒计时
+      if (this.delay == 0) {
+        this.delay = 60;
+        const interId = setInterval(() => {
+          //时间的递减
+          this.delay--;
+          if (this.delay == 0) {
+            //清除定时器
+            clearInterval(interId);
+          }
+        }, 1000);
+      }
+      // axios({
+      //   url: process.env.VUE_APP_URL + "/sendsms",
+      //   method: "post",
+      //   data: {
+      //     code: this.form.code,
+      //     phone: this.form.phone
+      //   },
+      //   // 是否跨域携带cookie 默认是false 验证码输入对的,也会报验证码的错
+      //   withCredentials: true
+      sendsms({
+        code: this.form.code,
+        phone: this.form.phone
+      }).then(res => {
+        //成功回调
+        window.console.log(res);
+        if (res.data.code === 200) {
+          this.$message.success("验证码获取成功:" + res.data.data.captcha);
+        } else {
+          this.$message.error(res.data.message);
+        }
+      });
+    },
+    //上传成功
+    handleAvatarSuccess(res, file) {
+      //URL.createObjectURL生成的是本地的临时路径,刷新就没用了
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    //上传之前
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg" || "image/png";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    }
   }
 };
 </script>
@@ -131,6 +236,32 @@ export default {
   .register-code {
     height: 40.8px;
     width: 100%;
+  }
+  .avatar-uploader {
+    text-align: center;
+  }
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409eff;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
   }
 }
 </style>

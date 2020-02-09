@@ -35,7 +35,7 @@
             </el-col>
             <!-- 登录验证码 -->
             <el-col :span="7" class="code-col">
-              <img class="login-code" src="../../assets/login_captcha.png" alt />
+              <img class="login-code" :src="codeUrl" @click="changeCode" alt />
             </el-col>
           </el-row>
         </el-form-item>
@@ -62,6 +62,9 @@
 <script>
 //导入 注册对话框组件
 import registerDialog from "./components/registerDialog.vue";
+
+window.console.log(process.env.VUE_APP_URL);
+
 export default {
   name: "login",
   //注册组件
@@ -91,31 +94,38 @@ export default {
           { min: 4, max: 4, message: "验证码的长度为4位", trigger: "blur" }
         ]
       },
+      codeUrl: process.env.VUE_APP_URL + "/captcha?type=sendsms"
     };
-    
   },
-   methods: {
-        // 提交表单
-        submitForm(formName) {
-          // 等同于 this.$refs['loginForm'] 相当于获取到了Element-ui的表单
-          // this.$refs['loginForm'] 等同于 this.$refs.loginForm
-          // validate这个方法是Element-ui的表单的方法
-          this.$refs[formName].validate(valid => {
-            if (valid) {
-              this.$message.success("验证成功");
-            } else {
-              this.$message.error("验证失败");
-              return false;
-            }
-          });
-        },
-        showRegister(){
-          // this.$refs 可以获取所有设置了ref属性的元素，包括组件
-          // registerDialog 和上面设置的属性要一致
-          // 也可以用 this.$refs['registerDialog']
-          this.$refs.registerDialog.dialogFormVisible = true;
+  methods: {
+    // 提交表单
+    submitForm(formName) {
+      // 等同于 this.$refs['loginForm'] 相当于获取到了Element-ui的表单
+      // this.$refs['loginForm'] 等同于 this.$refs.loginForm
+      // validate这个方法是Element-ui的表单的方法
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.$message.success("验证成功");
+        } else {
+          this.$message.error("验证失败");
+          return false;
         }
-      }
+      });
+    },
+    showRegister() {
+      // this.$refs 可以获取所有设置了ref属性的元素，包括组件
+      // registerDialog 和上面设置的属性要一致
+      // 也可以用 this.$refs['registerDialog']
+      this.$refs.registerDialog.dialogFormVisible = true;
+    },
+    changeCode() {
+      //随机数修改 效果不好
+      //this.codeURL = process.env.VUE_APP_URL+'/captcha?type=sendsms&t=' + Math.random()
+      // 时间戳修改
+      this.codeUrl =
+        process.env.VUE_APP_URL + "/captcha?type=sendsms&t=" + Date.now();
+    }
+  }
 };
 </script>
 
