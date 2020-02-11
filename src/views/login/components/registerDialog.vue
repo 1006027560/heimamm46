@@ -47,7 +47,7 @@
       <el-form-item label="验证码" :label-width="formLabelWidth">
         <el-row>
           <el-col :span="16">
-            <el-input v-model="form.name" autocomplete="off"></el-input>
+            <el-input v-model="form.rcode" autocomplete="off"></el-input>
           </el-col>
           <el-col :span="7" :offset="1">
             <!-- 点击获取 短信验证码 -->
@@ -62,7 +62,7 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="dialogFormVisible = false">取 消</el-button>
-      <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      <el-button type="primary" @click="submitForm('registerForm')">确 定</el-button>
     </div>
   </el-dialog>
 </template>
@@ -110,13 +110,15 @@ export default {
       dialogFormVisible: false,
       //表单数据
       form: {
-        avatar:'',
+        avatar: "",
         username: "",
         password: "",
         email: "",
         phone: "",
         //图形验证码
         code: "",
+        //验证码
+        rcode: "",
         //倒计时时间
         delay: 0,
         //本地图片预览地址
@@ -126,9 +128,7 @@ export default {
       },
 
       rules: {
-        avatar: [
-          { required: true, message: "头像不能为空", trigger: "blur" },
-        ],
+        avatar: [{ required: true, message: "头像不能为空", trigger: "blur" }],
         username: [
           { required: true, message: "用户名不能为空", trigger: "blur" },
           { min: 6, max: 12, message: "用户名长度为6-12位", trigger: "blur" }
@@ -162,6 +162,20 @@ export default {
     };
   },
   methods: {
+    // 提交表单
+    submitForm(formName) {
+      // 等同于 this.$refs['loginForm'] 相当于获取到了Element-ui的表单
+      // this.$refs['loginForm'] 等同于 this.$refs.loginForm
+      // validate这个方法是Element-ui的表单的方法
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.$message.success("验证成功");
+        } else {
+          this.$message.error("验证失败");
+          return false;
+        }
+      });
+    },
     //随机数解决验证码更换
     changeCode() {
       //随机数修改 效果不好
@@ -219,7 +233,7 @@ export default {
     },
     //上传成功
     handleAvatarSuccess(res, file) {
-      window.console.log(res)
+      window.console.log(res);
       //URL.createObjectURL生成的是本地的临时路径,刷新就没用了
       this.imageUrl = URL.createObjectURL(file.raw);
       //保存 服务器返回的图片地址
