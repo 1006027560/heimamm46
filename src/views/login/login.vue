@@ -62,10 +62,14 @@
 <script>
 //导入 注册对话框组件
 import registerDialog from "./components/registerDialog.vue";
-
+//定义效验函数 - 手机
 import { checkPhone } from "@/utils/vaildator.js";
+//导入登录接口
+import { login } from "@/api/login.js";
+//导入token的工具函数
+import { setToken } from "@/utils/token.js";
 
-window.console.log(process.env.VUE_APP_URL);
+// window.console.log(process.env.VUE_APP_URL);
 
 export default {
   name: "login",
@@ -104,7 +108,7 @@ export default {
           { min: 4, max: 4, message: "验证码的长度为4位", trigger: "blur" }
         ]
       },
-      codeUrl: process.env.VUE_APP_URL + "/captcha?type=sendsms"
+      codeUrl: process.env.VUE_APP_URL + "/captcha?type=login"
     };
   },
   methods: {
@@ -115,7 +119,27 @@ export default {
       // validate这个方法是Element-ui的表单的方法
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$message.success("验证成功");
+          if (this.loginForm.isChecked != true) {
+            return this.$message.warning("请勾选用户协议");
+          }
+          //验证通过
+          login({
+            phone: this.loginForm.phone,
+            password: this.loginForm.password,
+            code: this.loginForm.loginCode
+          }).then(res => {
+            if (res.data.code === 200) {
+              this.$message.success("登录成功");
+              // 服务器返回了token
+              //token保存到哪里 localStorage(一直都在) sessionStorage(刷新消失)
+              // window.localStorage.setItem("heimammToken", res.data.data.token);
+              setToken(res.data.data.token)
+              //跳转到首页
+              this.$router.push("/index");
+            } else if (res.data.code === 202) {
+              this.$message.success(res.data.message);
+            }
+          });
         } else {
           this.$message.error("验证失败");
           return false;
@@ -133,7 +157,7 @@ export default {
       //this.codeURL = process.env.VUE_APP_URL+'/captcha?type=sendsms&t=' + Math.random()
       // 时间戳修改
       this.codeUrl =
-        process.env.VUE_APP_URL + "/captcha?type=sendsms&t=" + Date.now();
+        process.env.VUE_APP_URL + "/captcha?type=login&t=" + Date.now();
     }
   }
 };
