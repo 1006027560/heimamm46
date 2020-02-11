@@ -35,7 +35,7 @@
       <el-form-item label="密码" prop="password" :label-width="formLabelWidth">
         <el-input show-password v-model="form.password" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="图形码" :label-width="formLabelWidth">
+      <el-form-item label="图形码" prop="code" :label-width="formLabelWidth">
         <el-col :span="16">
           <el-input v-model="form.code" autocomplete="off"></el-input>
         </el-col>
@@ -44,7 +44,7 @@
           <img class="register-code" @click="changeCode" :src="codeURL" alt />
         </el-col>
       </el-form-item>
-      <el-form-item label="验证码" :label-width="formLabelWidth">
+      <el-form-item label="验证码" prop="rcode" :label-width="formLabelWidth">
         <el-row>
           <el-col :span="16">
             <el-input v-model="form.rcode" autocomplete="off"></el-input>
@@ -61,7 +61,7 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogFormVisible = false">取 消</el-button>
+      <el-button @click="cancel('registerForm')">取 消</el-button>
       <el-button type="primary" @click="submitForm('registerForm')">确 定</el-button>
     </div>
   </el-dialog>
@@ -72,7 +72,7 @@
 //导入  抽取的接口
 // import { sendsms } from "../../../api/register.js";
 //使用@
-import { sendsms } from "@/api/register.js";
+import { sendsms, register } from "@/api/register.js";
 
 // 验证手机号的 函数
 const checkPhone = (rule, value, callback) => {
@@ -162,6 +162,15 @@ export default {
     };
   },
   methods: {
+    // 关闭表单
+    cancel(formName) {
+      window.console.log(formName);
+      // 关闭表单
+      this.dialogFormVisible = false;
+      // this.$refs[formName].resetFields();
+      // 人为的清空
+      // this.imageUrl = '';
+    },
     // 提交表单
     submitForm(formName) {
       // 等同于 this.$refs['loginForm'] 相当于获取到了Element-ui的表单
@@ -169,7 +178,28 @@ export default {
       // validate这个方法是Element-ui的表单的方法
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$message.success("验证成功");
+          //验证正确
+          //调接口
+          register({
+            username: this.form.username,
+            password: this.form.password,
+            phone: this.form.phone,
+            email: this.form.email,
+            avatar: this.form.avatar,
+            rcode: this.form.rcode
+          }).then(res => {
+            if (res.data.code == 200) {
+              this.$message.success("恭喜你,注册成功");
+              //关闭对话框
+              this.dialogFormVisible = false;
+              //清除数据
+              this.$refs[formName].resetFields(); //表单数据
+              //人为清空 图片
+              this.imageUrl = "";
+            } else if (res.data.code == 201) {
+              this.$message.error(res.data.message);
+            }
+          });
         } else {
           this.$message.error("验证失败");
           return false;
@@ -238,6 +268,8 @@ export default {
       this.imageUrl = URL.createObjectURL(file.raw);
       //保存 服务器返回的图片地址
       this.form.avatar = res.data.file_path;
+      //表单中头像数据实时监控
+      this.$refs.registerForm.validateField("avatar");
     },
     //上传之前
     beforeAvatarUpload(file) {
