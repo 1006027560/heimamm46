@@ -11,7 +11,7 @@
       <!-- 表单 -->
       <el-form ref="loginForm" :rules="rules" :model="loginForm" label-width="43px">
         <!-- 手机号 -->
-        <el-form-item>
+        <el-form-item prop="phone">
           <el-input prefix-icon="el-icon-user" placeholder="请输入手机号" v-model="loginForm.phone"></el-input>
         </el-form-item>
         <!-- 密码 -->
@@ -63,6 +63,8 @@
 //导入 注册对话框组件
 import registerDialog from "./components/registerDialog.vue";
 
+import { checkPhone } from "@/utils/vaildator.js";
+
 window.console.log(process.env.VUE_APP_URL);
 
 export default {
@@ -84,6 +86,14 @@ export default {
         isChecked: false
       },
       rules: {
+        phone: [
+          {
+            required: true,
+            message: "手机号不能为空",
+            trigger: "blur"
+          },
+          { validator: checkPhone, trigger: "change" }
+        ],
         password: [
           { required: true, message: "密码不能为空", trigger: "blur" },
           { min: 6, max: 12, message: "密码的长度为6-12位", trigger: "change" }
