@@ -7,7 +7,7 @@
     :visible.sync="dialogFormVisible"
   >
     <el-form status-icon :model="form" :rules="rules" ref="registerForm">
-      <el-form-item label="头像">
+      <el-form-item label="头像" prop="avatar">
         <el-upload
           class="avatar-uploader"
           :action="uploadUrl"
@@ -110,6 +110,7 @@ export default {
       dialogFormVisible: false,
       //表单数据
       form: {
+        avatar:'',
         username: "",
         password: "",
         email: "",
@@ -125,6 +126,9 @@ export default {
       },
 
       rules: {
+        avatar: [
+          { required: true, message: "头像不能为空", trigger: "blur" },
+        ],
         username: [
           { required: true, message: "用户名不能为空", trigger: "blur" },
           { min: 6, max: 12, message: "用户名长度为6-12位", trigger: "blur" }
@@ -215,12 +219,15 @@ export default {
     },
     //上传成功
     handleAvatarSuccess(res, file) {
+      window.console.log(res)
       //URL.createObjectURL生成的是本地的临时路径,刷新就没用了
       this.imageUrl = URL.createObjectURL(file.raw);
+      //保存 服务器返回的图片地址
+      this.form.avatar = res.data.file_path;
     },
     //上传之前
     beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg" || "image/png";
+      const isJPG = file.type === "image/jpeg" || "image/png" || "image/gif";
       const isLt2M = file.size / 1024 / 1024 < 2;
 
       if (!isJPG) {
