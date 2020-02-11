@@ -40,7 +40,7 @@
           <el-input v-model="form.code" autocomplete="off"></el-input>
         </el-col>
         <el-col :span="7" :offset="1" class="register-box">
-           <!-- 图片验证码 -->
+          <!-- 图片验证码 -->
           <img class="register-code" @click="changeCode" :src="codeURL" alt />
         </el-col>
       </el-form-item>
@@ -70,7 +70,9 @@
 <script>
 // import axios from "axios";
 //导入  抽取的接口
-import { sendsms } from "../../../api/register.js";
+// import { sendsms } from "../../../api/register.js";
+//使用@
+import { sendsms } from "@/api/register.js";
 
 // 验证手机号的 函数
 const checkPhone = (rule, value, callback) => {
@@ -166,6 +168,17 @@ export default {
     },
     //获取短信验证码
     getSMS() {
+      //手机号效验
+      const reg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+      if (reg.test(this.form.phone != true)) {
+        this.$message.error("手机号格式不对哦,请重新输入");
+        return;
+      }
+      //图片验证码效验
+      if (this.form.code.length != 4) {
+        this.$message.error("图片验证码的长度不对哦,请重新输入");
+        return;
+      }
       //如果为0开启倒计时
       if (this.delay == 0) {
         this.delay = 60;
