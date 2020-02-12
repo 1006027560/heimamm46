@@ -8,7 +8,10 @@ import VueRouter from 'vue-router'
 import login from '../views/login/login.vue'
 import index from '../views/index/index.vue'
 
-
+//导入进入条
+import NProress from 'nprogress'
+//进度条样式
+import 'nprogress/nprogress.css'
 // 导入组件 嵌套路由 数据 chart
 import chart from '@/views/index/chart/chart.vue';
 // 导入组件 嵌套路由 用户 user
@@ -67,5 +70,20 @@ const router = new VueRouter({
 
     ]
 });
+
+//导航守卫beforeEach进入之前
+router.beforeEach((to,form,next)=>{
+    //开启进度条
+    NProress.start()
+    //向后走
+    next()
+})
+// 导航守卫 afterEach进入完成之后
+//router.afterEach((to,form)=>{
+    router.afterEach(()=>{
+        //关闭进度条
+        NProress.done()
+    })
+
 //暴露出去
 export default router

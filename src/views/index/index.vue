@@ -15,7 +15,7 @@
     <el-container>
       <!-- 侧边栏 -->
       <el-aside width="auto" class="my-aside">
-        <el-menu router  default-active="2" :collapse="isCollapse" class="el-menu-vertical-demo">
+        <el-menu router  :default-active="$route.path" :collapse="isCollapse" class="el-menu-vertical-demo">
           <el-menu-item index="/index/chart">
             <i class="el-icon-pie-chart"></i>
             <span slot="title">数据概览</span>
