@@ -48,7 +48,7 @@
 
 <script>
 import { info, logout } from "@/api/index.js";
-import { removeToken } from "@/utils/token.js";
+import { removeToken,getToken } from "@/utils/token.js";
 export default {
   name: "index",
   data() {
@@ -79,6 +79,15 @@ export default {
         .catch(() => {
           //点击取消
         });
+    }
+  },
+  //判断token是否为空
+  beforeCreate() {
+    if (getToken()==undefined) {
+      //提示用户
+      this.$message.warning('请先登录')
+      //返回登录页
+      this.$router.push('/login')
     }
   },
   created() {
