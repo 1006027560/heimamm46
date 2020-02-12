@@ -3,13 +3,13 @@
     <el-header class="my-header">
       <div class="left">
         <i class="el-icon-s-fold"></i>
-        <img src="../../assets/index_logo.png" alt="">
+        <img src="../../assets/index_logo.png" alt />
         <span>黑马面面</span>
       </div>
       <div class="right">
-        <img :src="userIcon" alt="">
+        <img :src="userIcon" alt />
         <span class="name">{{username}},您好</span>
-        <el-button type="primary">退出</el-button>
+        <el-button type="primary" @click="logout">退出</el-button>
       </div>
     </el-header>
     <el-container>
@@ -20,25 +20,46 @@
 </template>
 
 <script>
-import {info} from '@/api/index.js'
+import { info, logout } from "@/api/index.js";
+import { removeToken } from "@/utils/token.js";
 export default {
-  name:'index',
+  name: "index",
   data() {
     return {
       //用户名
-      username:'',
+      username: "",
       //用户头像
-      userIcon:''
+      userIcon: ""
+    };
+  },
+  methods: {
+    logout() {
+      this.$confirm("你确定要退出吗", "友情提示", {
+        comfirmButtonText: "狠心离开",
+        cancelButtonText: "继续看看",
+        type: "success"
+      })
+        .then(() => {
+          logout().then(res => {
+            if (res.data.code === 200) {
+              removeToken();
+              this.$router.push("/login");
+            }
+          });
+        })
+        .catch(() => {
+          //点击取消
+        });
     }
   },
   created() {
-    info().then(res=>{
+    info().then(res => {
       this.username = res.data.data.username;
-      //服务器返回的头像地址不完整,需要进行拼接
-      this.userIcon = process.env.VUE_APP_URL+'/'+res.data.data.avatar
-    })
-  },
-}
+      // 服务器返回的头像地址不完整，需要进行拼接
+      this.userIcon = process.env.VUE_APP_URL + "/" + res.data.data.avatar;
+    });
+  }
+};
 </script>
 
 <style lang="less">
