@@ -16,6 +16,7 @@ export function info() {
     return indexRequest({
        url:'/info', 
        methods: 'get',
+        // 设置请求头 headers 是axios定义的设置方式
        headers:{
            token:getToken()
        }

@@ -15,7 +15,12 @@
     <el-container>
       <!-- 侧边栏 -->
       <el-aside width="auto" class="my-aside">
-        <el-menu router  :default-active="$route.path" :collapse="isCollapse" class="el-menu-vertical-demo">
+        <el-menu
+          router
+          :default-active="$route.path"
+          :collapse="isCollapse"
+          class="el-menu-vertical-demo"
+        >
           <el-menu-item index="/index/chart">
             <i class="el-icon-pie-chart"></i>
             <span slot="title">数据概览</span>
@@ -47,8 +52,8 @@
 </template>
 
 <script>
-import { info, logout } from "@/api/index.js";
-import { removeToken,getToken } from "@/utils/token.js";
+import {  logout } from "@/api/index.js";
+import { removeToken } from "@/utils/token.js";
 export default {
   name: "index",
   data() {
@@ -82,21 +87,27 @@ export default {
     }
   },
   //判断token是否为空
-  beforeCreate() {
-    if (getToken()==undefined) {
-      //提示用户
-      this.$message.warning('请先登录')
-      //返回登录页
-      this.$router.push('/login')
-    }
-  },
-  created() {
-    info().then(res => {
-      this.username = res.data.data.username;
-      // 服务器返回的头像地址不完整，需要进行拼接
-      this.userIcon = process.env.VUE_APP_URL + "/" + res.data.data.avatar;
-    });
-  }
+  // beforeCreate() {
+  //   if (getToken() == undefined) {
+  //     //提示用户
+  //     this.$message.warning("请先登录");
+  //     //返回登录页
+  //     this.$router.push("/login");
+  //   }
+  // },
+  // created() {
+  //   info().then(res => {
+  //     if (res.data.code === 206) {
+  //       this.$message.warning("登录状态有误,请重新登录");
+  //       removeToken();
+  //       this.$router.push("/login");
+  //     } else if (res.data.code === 200) {
+  //       this.username = res.data.data.username;
+  //       // 服务器返回的头像地址不完整，需要进行拼接
+  //       this.userIcon = process.env.VUE_APP_URL + "/" + res.data.data.avatar;
+  //     }
+  //   });
+  // }
 };
 </script>
 
