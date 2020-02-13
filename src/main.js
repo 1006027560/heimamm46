@@ -1,7 +1,7 @@
 import Vue from 'vue'
 // 导入组件
 import App from './App.vue'
-import store from './store/index.js'
+import store from './store/index.js' //导入仓库
 // 导入全局样式
 import './style/bace.css'
 //导入element-ui
@@ -15,8 +15,8 @@ import router from './router/index.js'
 Vue.config.productionTip = false
 
 new Vue({
-
   render: h => h(App),
   router,
+  //挂载到vue实例上  仓库
   store
 }).$mount('#app')
