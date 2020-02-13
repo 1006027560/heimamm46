@@ -47,6 +47,11 @@ import subject from '@/views/index/subject/subject.vue';
 const router = new VueRouter({
   // 路由规则
   routes: [
+    // 地址的重定向
+    {
+      path: '/',
+      redirect: '/login',
+    },
     // 登录
     {
       path: '/login',
@@ -109,6 +114,8 @@ router.beforeEach((to, from, next) => {
       // 为空
       // this 不是 vue示例
       Message.warning('登录状态有误，请检查');
+      //进度条加载完成  手动关闭进度条,因为不会触发afterEach
+      NProgress.done();
       // 返回登录页
       next('/login');
     } else {
@@ -118,6 +125,8 @@ router.beforeEach((to, from, next) => {
         if (res.data.code === 206) {
           // 提示用户
           Message.warning('登录状态有误，请检查');
+          //进度条加载完成   手动关闭进度条,因为不会触发afterEach
+          NProgress.done();
           // 删除token
           removeToken();
           // 返回登录页
