@@ -24,6 +24,7 @@ import {
   Message
 } from 'element-ui';
 
+import store from '@/store/index.js'
 // 注册一下 use
 Vue.use(VueRouter);
 
@@ -42,6 +43,7 @@ import question from '@/views/index/question/question.vue';
 import enterprise from '@/views/index/enterprise/enterprise.vue';
 // 导入组件 嵌套路由 学科 subject
 import subject from '@/views/index/subject/subject.vue';
+
 
 // 创建路由对象
 const router = new VueRouter({
@@ -156,6 +158,10 @@ router.beforeEach((to, from, next) => {
           const username = res.data.data.username;
           //       // 服务器返回的头像地址不完整，需要进行拼接
           const userIcon = process.env.VUE_APP_URL + '/' + res.data.data.avatar;
+          //调用仓库
+          store.commit('changeIcon', userIcon);
+          store.commit('changeName', username);
+
           // 获取成功
           // 放走
           next();
