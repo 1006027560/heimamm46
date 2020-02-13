@@ -153,6 +153,9 @@ router.beforeEach((to, from, next) => {
           // 返回登录页
           next('/login');
         } else if (res.data.code === 200) {
+          const username = res.data.data.username;
+          //       // 服务器返回的头像地址不完整，需要进行拼接
+          const userIcon = process.env.VUE_APP_URL + '/' + res.data.data.avatar;
           // 获取成功
           // 放走
           next();
