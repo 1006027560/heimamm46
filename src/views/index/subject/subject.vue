@@ -21,7 +21,7 @@
         <el-form-item>
           <el-button type="primary">查询</el-button>
           <el-button>清除</el-button>
-          <el-button type="primary" icon="el-icon-plus">新增学科</el-button>
+          <el-button type="primary" icon="el-icon-plus" @click="$refs.subjectAdd.dialogFormVisible = true">新增学科</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -65,13 +65,19 @@
         :total="total"
       ></el-pagination>
     </el-card>
+    <!-- 新增对话框 -->
+    <subjectAdd ref="subjectAdd"></subjectAdd>
   </div>
 </template>
 
 <script>
 import { subjectList,subjectStatus } from "@/api/subject.js";
+import subjectAdd from './components/subjectAdd.vue'
 export default {
   name: "subject",
+  components:{
+    subjectAdd
+  },
   created() {
     // subjectList().then(res => {
     //   this.tableData = res.data.items;
