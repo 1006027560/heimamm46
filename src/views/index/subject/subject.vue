@@ -19,9 +19,9 @@
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" >查询</el-button>
-          <el-button >清除</el-button>
-          <el-button type="primary" icon="el-icon-plus" >新增学科</el-button>
+          <el-button type="primary">查询</el-button>
+          <el-button>清除</el-button>
+          <el-button type="primary" icon="el-icon-plus">新增学科</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -69,13 +69,14 @@
 </template>
 
 <script>
-import { subjectList } from "@/api/subject.js";
+import { subjectList,subjectStatus } from "@/api/subject.js";
 export default {
   name: "subject",
   created() {
-    subjectList().then(res => {
-      this.tableData = res.data.items;
-    });
+    // subjectList().then(res => {
+    //   this.tableData = res.data.items;
+    // });
+    this.getData()
   },
   data() {
     return {
@@ -116,6 +117,11 @@ export default {
     };
   },
   methods: {
+    getData(){
+      subjectList().then(res =>{
+        this.tableData =res.data.items;
+      })
+    },
     // 编辑
     handleEdit(index, row) {
       window.console.log(index, row);
@@ -127,7 +133,16 @@ export default {
     },
     // 不允许
     handleNotAllow(index, row) {
-      window.console.log(index, row);
+      // window.console.log(index, row);
+      subjectStatus({
+        id:row.id
+      }).then(res=>{
+        if (res.code ===200) {
+          this.$message.success('状态修改成功!')
+          //重新获取数据
+          this.getData()
+        }
+      })
     },
     // 页容量改变
     sizeChange(val) {
