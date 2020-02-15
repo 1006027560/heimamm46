@@ -19,9 +19,9 @@
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
-          <el-button @click="onSubmit">清除</el-button>
-          <el-button type="primary" icon="el-icon-plus" @click="onSubmit">新增学科</el-button>
+          <el-button type="primary" >查询</el-button>
+          <el-button >清除</el-button>
+          <el-button type="primary" icon="el-icon-plus" >新增学科</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -29,13 +29,25 @@
     <el-card class="bottom-card">
       <el-table :data="tableData" style="width: 100%">
         <el-table-column type="index" width="50" label="索引"></el-table-column>
-        <el-table-column prop="date" label="日期"></el-table-column>
-        <el-table-column prop="name" label="姓名"></el-table-column>
-        <el-table-column prop="address" label="地址"></el-table-column>
+        <el-table-column prop="rid" label="学科编号"></el-table-column>
+        <el-table-column prop="name" label="学科名称"></el-table-column>
+        <el-table-column prop="short_name" label="简称"></el-table-column>
+        <el-table-column prop="username" label="创建者"></el-table-column>
+        <el-table-column prop="create_time" label="创建日期"></el-table-column>
+        <el-table-column prop="status" label="状态">
+          <template slot-scope="scope">
+            <span v-if="scope.row.status===1">启用</span>
+            <span style="color:red" v-else>禁用</span>
+          </template>
+        </el-table-column>
+
         <el-table-column label="操作">
           <template slot-scope="niubi">
             <el-button type="text" size="mini" @click="handleEdit(niubi.$index, niubi.row)">编辑</el-button>
-            <el-button type="text" @click="handleNotAllow(niubi.$index, niubi.row)">禁用</el-button>
+            <el-button
+              type="text"
+              @click="handleNotAllow(niubi.$index, niubi.row)"
+            >{{niubi.row.status===1?'禁用':'启用'}}</el-button>
             <el-button size="mini" type="text" @click="handleDelete(niubi.$index, niubi.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -57,8 +69,14 @@
 </template>
 
 <script>
+import { subjectList } from "@/api/subject.js";
 export default {
   name: "subject",
+  created() {
+    subjectList().then(res => {
+      this.tableData = res.data.items;
+    });
+  },
   data() {
     return {
       formInline: {
