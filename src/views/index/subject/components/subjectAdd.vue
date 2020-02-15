@@ -54,7 +54,7 @@ export default {
         name: [{ required: true, message: "学科名称不能为空", trigger: "blur" }]
       },
       // 文字的宽度
-      formLabeWidth: "120px"
+      formLabelWidth: "120px"
     };
   },
   methods: {

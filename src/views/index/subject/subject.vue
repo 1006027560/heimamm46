@@ -21,7 +21,11 @@
         <el-form-item>
           <el-button type="primary">查询</el-button>
           <el-button>清除</el-button>
-          <el-button type="primary" icon="el-icon-plus" @click="$refs.subjectAdd.dialogFormVisible = true">新增学科</el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-plus"
+            @click="$refs.subjectAdd.dialogFormVisible = true"
+          >新增学科</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -71,18 +75,18 @@
 </template>
 
 <script>
-import { subjectList,subjectStatus } from "@/api/subject.js";
-import subjectAdd from './components/subjectAdd.vue'
+import { subjectList, subjectStatus } from "@/api/subject.js";
+import subjectAdd from "./components/subjectAdd.vue";
 export default {
   name: "subject",
-  components:{
+  components: {
     subjectAdd
   },
   created() {
     // subjectList().then(res => {
     //   this.tableData = res.data.items;
     // });
-    this.getData()
+    this.getData();
   },
   data() {
     return {
@@ -123,10 +127,17 @@ export default {
     };
   },
   methods: {
-    getData(){
-      subjectList().then(res =>{
-        this.tableData =res.data.items;
-      })
+    getData() {
+      subjectList({
+        //页码
+        page: this.index,
+        //页容量
+        limit: this.size
+      }).then(res => {
+        this.tableData = res.data.items;
+        //总数保存
+        this.total = res.data.pagination.total;
+      });
     },
     // 编辑
     handleEdit(index, row) {
@@ -141,22 +152,28 @@ export default {
     handleNotAllow(index, row) {
       // window.console.log(index, row);
       subjectStatus({
-        id:row.id
-      }).then(res=>{
-        if (res.code ===200) {
-          this.$message.success('状态修改成功!')
+        id: row.id
+      }).then(res => {
+        if (res.code === 200) {
+          this.$message.success("状态修改成功!");
           //重新获取数据
-          this.getData()
+          this.getData();
         }
-      })
+      });
     },
     // 页容量改变
     sizeChange(val) {
-      window.console.log(`每页 ${val} 条`);
+      // window.console.log(`每页 ${val} 条`);
+      this.index = 1;
+      //设置新的页容量
+      this.size = val;
+      this.getData();
     },
     // 页码改变
     currentChange(val) {
       window.console.log(`当前页: ${val}`);
+      this.index = val;
+      this.getData();
     }
   }
 };
