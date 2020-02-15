@@ -2,25 +2,26 @@
   <div class="subject-container">
     <!-- 顶部盒子 -->
     <el-card class="top-card">
-      <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item label="学科编号">
-          <el-input class="short" v-model="formInline.user" placeholder="审批人"></el-input>
+      <el-form ref="formInline" :inline="true" :model="formInline" class="demo-form-inline">
+        <el-form-item label="学科编号" prop="rid">
+          <el-input class="short" v-model="formInline.rid" placeholder="学科编号"></el-input>
         </el-form-item>
-        <el-form-item label="学科名称">
-          <el-input class="normal" v-model="formInline.user" placeholder="审批人"></el-input>
+        <el-form-item label="学科名称" prop="name">
+          <el-input class="normal" v-model="formInline.name" placeholder="学科名称"></el-input>
         </el-form-item>
-        <el-form-item label="创建者">
-          <el-input class="short" v-model="formInline.user" placeholder="审批人"></el-input>
+        <el-form-item label="创建者" prop="username">
+          <el-input class="short" v-model="formInline.username" placeholder="创建者"></el-input>
         </el-form-item>
-        <el-form-item label="状态">
-          <el-input class="short" v-model="formInline.region" placeholder="活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
-          </el-input>
+        <el-form-item label="状态" prop="status">
+          <el-select class="short" v-model="formInline.status" placeholder="状态">
+            <el-option label="所有" value></el-option>
+            <el-option label="禁用" value="0"></el-option>
+            <el-option label="启用" value="1"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">查询</el-button>
-          <el-button>清除</el-button>
+          <el-button type="primary" @click="searchSubject">查询</el-button>
+          <el-button @click="clearSeach">清除</el-button>
           <el-button
             type="primary"
             icon="el-icon-plus"
@@ -71,16 +72,21 @@
     </el-card>
     <!-- 新增对话框 -->
     <subjectAdd ref="subjectAdd"></subjectAdd>
+    <!-- 编辑对话框 -->
+    <subjectEdit ref="subjectEdit"></subjectEdit>
   </div>
 </template>
 
 <script>
-import { subjectList, subjectStatus } from "@/api/subject.js";
+import { subjectList, subjectStatus, subjectRemove } from "@/api/subject.js";
 import subjectAdd from "./components/subjectAdd.vue";
+//导入 编辑对话框
+import subjectEdit from "./components/subjectEdit.vue";
 export default {
   name: "subject",
   components: {
-    subjectAdd
+    subjectAdd,
+    subjectEdit
   },
   created() {
     // subjectList().then(res => {
@@ -91,8 +97,10 @@ export default {
   data() {
     return {
       formInline: {
-        user: "",
-        region: ""
+        name: "",
+        rid: "",
+        status: "",
+        username: ""
       },
       // 底部表格的数据
       tableData: [
@@ -127,12 +135,26 @@ export default {
     };
   },
   methods: {
+    searchSubject() {
+      this.index = 1;
+      this.getData();
+    },
+    clearSeach() {
+      //ele提供的清除方法
+      this.$refs.formInline.resetFields();
+      //重新回到第一页
+      this.index = 1;
+      //重新获取数据
+      this.getData();
+    },
     getData() {
       subjectList({
         //页码
         page: this.index,
         //页容量
-        limit: this.size
+        limit: this.size,
+        //合并筛选条件,展开运算符
+        ...this.formInline
       }).then(res => {
         this.tableData = res.data.items;
         //总数保存
@@ -141,12 +163,33 @@ export default {
     },
     // 编辑
     handleEdit(index, row) {
-      window.console.log(index, row);
-      row.name = "王二花";
+      // window.console.log(index, row);
+      // row.name = "王二花";
+      this.$refs.subjectEdit.dialogFormVisible = true;
+      //返回的是字符串,转换对象
+      this.$refs.subjectEdit.form = JSON.parse(JSON.stringify(row));
     },
     // 删除
     handleDelete(index, row) {
       window.console.log(index, row);
+      const id = row.id;
+      this.$confirm("确定要删除该学科吗", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        subjectRemove({
+          id
+        }).then(res => {
+          if (res.code === 200) {
+            this.$message.success('删除成功')
+            this.getData()
+          }
+        });
+      })
+      .catch(()=>{
+        
+      })
     },
     // 不允许
     handleNotAllow(index, row) {

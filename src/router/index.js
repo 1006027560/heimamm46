@@ -135,9 +135,10 @@ router.beforeEach((to, from, next) => {
         window.console.log(res);
         if (res.data.code === 206) {
           // token有问题
-          removeToken();
+          
           Message.warning('登录状态有误，请重新登录');
           NProgress.done();
+          removeToken();
           next('/login');
         } else if (res.data.code === 200) {
           // 处理用户的信息 用户的名字
