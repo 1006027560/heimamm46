@@ -39,7 +39,11 @@
         <el-table-column prop="name" label="学科名称"></el-table-column>
         <el-table-column prop="short_name" label="简称"></el-table-column>
         <el-table-column prop="username" label="创建者"></el-table-column>
-        <el-table-column prop="create_time" label="创建日期"></el-table-column>
+        <el-table-column prop="create_time" label="创建日期">
+          <template slot-scope="scope">
+            {{scope.row.create_time | formatTime}}
+          </template>
+        </el-table-column>
         <el-table-column prop="status" label="状态">
           <template slot-scope="scope">
             <span v-if="scope.row.status === 1">启用</span>
@@ -195,7 +199,13 @@ export default {
       // this.$refs.subjectEdit.form = JSON.parse(rowStr)
 
       // 一行搞定 obj->string->新的obj
-      this.$refs.subjectEdit.form = JSON.parse(JSON.stringify(row));
+      // this.$refs.subjectEdit.form = JSON.parse(JSON.stringify(row));
+      //如果id改变了,说明是重新编辑 再赋值
+      if (row.id != this.$refs.subjectEdit.form.id) {
+        this.$refs.subjectEdit.form = JSON.parse(JSON.stringify(row));
+      } else {
+        //相等,不需要执行逻辑
+      }
     },
     // 删除
     handleDelete(index, row) {
@@ -214,9 +224,13 @@ export default {
             // window.console.log(res)
             if (res.code === 200) {
               this.$message.success("删除成功");
+              // 增加最后一页的判断
               if (this.tableData.length == 1) {
                 // 服务器的已删除
+                // 继续获取这一页的数据 会拿不到
+                //页码--
                 this.index--;
+                // 如果是第一页
                 if (this.index <= 0) {
                   this.index = 1;
                 }

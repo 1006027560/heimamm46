@@ -13,7 +13,8 @@ Vue.use(ElementUI);
 import router from './router/index.js'
 
 Vue.config.productionTip = false
-
+//导入全局过滤器 不需要接收
+import '@/filters/index.js'
 new Vue({
   render: h => h(App),
   router,
