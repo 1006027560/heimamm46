@@ -68,17 +68,17 @@ export default {
               // 关闭对话框
               this.dialogFormVisible = false;
               // 清空对话框
-              this.$refs[formName].resetFields()
-                // 重新获取数据
-              this.$parent.getData()
-              this.$message.success('新增成功')
-            }else if(res.code ===201){
-                this.$message.warning(res.message)
+              this.$refs[formName].resetFields();
+              // 重新获取数据
+              this.$parent.getData();
+              this.$message.success("新增成功");
+            } else if (res.code === 201) {
+              this.$message.warning(res.message);
             }
           });
-        }else {
-             // 失败
-          this.$message.error('数据校验失败，请检查')
+        } else {
+          // 失败
+          this.$message.error("数据校验失败，请检查");
           return false;
         }
       });

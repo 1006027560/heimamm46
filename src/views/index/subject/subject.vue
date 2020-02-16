@@ -13,14 +13,22 @@
           <el-input class="short" v-model="formInline.username" placeholder="创建者"></el-input>
         </el-form-item>
         <el-form-item label="状态" prop="status">
+<<<<<<< HEAD
           <el-select class="normal" v-model="formInline.status" placeholder="状态">
+=======
+          <el-select class="short" v-model="formInline.status" placeholder="状态">
+>>>>>>> subject
             <el-option label="所有" value></el-option>
             <el-option label="禁用" value="0"></el-option>
             <el-option label="启用" value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
+<<<<<<< HEAD
           <el-button @click="searchSubject" type="primary">查询</el-button>
+=======
+          <el-button type="primary" @click="searchSubject">查询</el-button>
+>>>>>>> subject
           <el-button @click="clearSeach">清除</el-button>
           <el-button
             @click="$refs.subjectAdd.dialogFormVisible = true"
@@ -83,11 +91,17 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 // 导入接口
 import { subjectList, subjectStatus, subjectRemove } from "@/api/subject.js";
 // 导入新增对话框
 import subjectAdd from "./components/subjectAdd.vue";
 // 导入 编辑对话框
+=======
+import { subjectList, subjectStatus, subjectRemove } from "@/api/subject.js";
+import subjectAdd from "./components/subjectAdd.vue";
+//导入 编辑对话框
+>>>>>>> subject
 import subjectEdit from "./components/subjectEdit.vue";
 export default {
   name: "subject",
@@ -105,6 +119,7 @@ export default {
     return {
       // 顶部表单的数据
       formInline: {
+<<<<<<< HEAD
         // 学科名
         name: "",
         // 学科编号
@@ -112,6 +127,11 @@ export default {
         // 状态
         status: "",
         // 创建者名
+=======
+        name: "",
+        rid: "",
+        status: "",
+>>>>>>> subject
         username: ""
       },
       // 底部表格的数据
@@ -147,6 +167,7 @@ export default {
     };
   },
   methods: {
+<<<<<<< HEAD
     // 清空搜索
     clearSeach() {
       // 清空表单
@@ -167,13 +188,33 @@ export default {
       this.getData();
     },
     // 获取数据的方法
+=======
+    searchSubject() {
+      this.index = 1;
+      this.getData();
+    },
+    clearSeach() {
+      //ele提供的清除方法
+      this.$refs.formInline.resetFields();
+      //重新回到第一页
+      this.index = 1;
+      //重新获取数据
+      this.getData();
+    },
+>>>>>>> subject
     getData() {
       subjectList({
         // 页码
         page: this.index,
+<<<<<<< HEAD
         // 页容量
         limit: this.size,
         // 合并筛选条件 展开运算符
+=======
+        //页容量
+        limit: this.size,
+        //合并筛选条件,展开运算符
+>>>>>>> subject
         ...this.formInline
       }).then(res => {
         window.console.log(res);
@@ -186,6 +227,7 @@ export default {
     // 编辑学科模块 - 修改02 -保存修改
     handleEdit(index, row) {
       // window.console.log(index, row);
+<<<<<<< HEAD
       // row.name = '王二花';
       // 弹出编辑框
       this.$refs.subjectEdit.dialogFormVisible = true;
@@ -240,6 +282,34 @@ export default {
           });
         })
         .catch(() => {});
+=======
+      // row.name = "王二花";
+      this.$refs.subjectEdit.dialogFormVisible = true;
+      //返回的是字符串,转换对象
+      this.$refs.subjectEdit.form = JSON.parse(JSON.stringify(row));
+    },
+    // 删除
+    handleDelete(index, row) {
+      window.console.log(index, row);
+      const id = row.id;
+      this.$confirm("确定要删除该学科吗", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        subjectRemove({
+          id
+        }).then(res => {
+          if (res.code === 200) {
+            this.$message.success('删除成功')
+            this.getData()
+          }
+        });
+      })
+      .catch(()=>{
+        
+      })
+>>>>>>> subject
     },
     // 状态切换
     handleNotAllow(index, row) {
